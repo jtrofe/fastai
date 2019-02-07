@@ -4,6 +4,7 @@ import inspect,importlib,enum,os,re
 from IPython.core.display import display, Markdown, HTML
 from nbconvert import HTMLExporter
 from IPython.core import page
+from IPython import get_ipython
 from typing import Dict, Any, AnyStr, List, Sequence, TypeVar, Tuple, Optional, Union
 from .docstrings import *
 from .core import *
@@ -127,7 +128,10 @@ def doc(elt):
         md += f'\n\n<a href="{get_fn_link(elt)}" target="_blank" rel="noreferrer noopener">Show in docs</a>'
     output = HTMLExporter().markdown2html(md)
     use_relative_links = True
-    page.page({'text/html': output})
+    if 'google.colab' in get_ipython().config.InteractiveShellApp.extensions:
+        get_ipython().run_cell_magic(u'HTML', u'', output)
+    else:
+        page.page({'text/html': output})
     #display(Markdown(md))
 
 
